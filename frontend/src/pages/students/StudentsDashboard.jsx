@@ -228,7 +228,7 @@ const StudentsDashboard = ({ type = "overview" }) => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {assignments.slice(0, 3).map((assignment) => {
+                  {assignments.map((assignment) => {
                     const teacherName = assignment.teacherId?.name || 'Teacher';
                     
                     return (

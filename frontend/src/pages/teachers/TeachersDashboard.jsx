@@ -181,7 +181,7 @@ const TeachersDashboard = ({ type = "overview" }) => {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {assignments.slice(0, 3).map((assignment) => (
+                  {assignments.map((assignment) => (
                     <div key={assignment._id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex justify-between items-start">
                         <div>
