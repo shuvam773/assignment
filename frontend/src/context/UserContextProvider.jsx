@@ -64,7 +64,8 @@ const UserContextProvider = ({ children }) => {
     localStorage.removeItem('userId');
     localStorage.removeItem('userCreatedBy');
     setUser(null);
-    window.location.href = '/login';
+    // Use navigate from react-router
+    window.location.replace('/login');
   };
 
   const [signupInfo, setSignupInfo] = useState({
