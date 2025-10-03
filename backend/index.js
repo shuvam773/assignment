@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cors({
     origin: 'https://assignment-delta-tawny.vercel.app',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials
+    credentials:true
 }));
 app.use(cookieParser());
 
