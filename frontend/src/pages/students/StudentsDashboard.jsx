@@ -8,12 +8,10 @@ const StudentsDashboard = ({ type = "overview" }) => {
   const navigate = useNavigate();
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [submissions, setSubmissions] = useState({});
 
   // Fetch assignments when component mounts
   useEffect(() => {
     fetchAssignments();
-    fetchMySubmissions();
   }, []);
 
   const fetchAssignments = async () => {
@@ -28,39 +26,9 @@ const StudentsDashboard = ({ type = "overview" }) => {
     }
   };
 
-  const fetchMySubmissions = async () => {
-    try {
-      // You'll need to implement this endpoint
-      const response = await api.get('/submissions/my-submissions');
-      const submissionsMap = {};
-      response.data.forEach(submission => {
-        submissionsMap[submission.assignmentId] = submission;
-      });
-      setSubmissions(submissionsMap);
-    } catch (error) {
-      console.error('Error fetching submissions:', error);
-      // For now, set empty submissions
-      setSubmissions({});
-    }
-  };
+  
 
-  const handleSubmitAssignment = async (assignmentId) => {
-    // You can implement file upload or text submission here
-    const submissionText = prompt('Enter your submission:');
-    if (submissionText) {
-      try {
-        await api.post('/submissions/submit', {
-          assignmentId,
-          submission: submissionText
-        });
-        alert('Assignment submitted successfully!');
-        fetchMySubmissions();
-      } catch (error) {
-        console.error('Error submitting assignment:', error);
-        alert('Error submitting assignment');
-      }
-    }
-  };
+  
 
   const handleLogout = () => {
     if (window.confirm('Are you sure you want to logout?')) {
@@ -68,15 +36,7 @@ const StudentsDashboard = ({ type = "overview" }) => {
     }
   };
 
-  const getSubmissionStatus = (assignmentId) => {
-    const submission = submissions[assignmentId];
-    if (!submission) return { status: 'not_submitted', text: 'Not Submitted' };
-    
-    if (submission.graded) {
-      return { status: 'graded', text: `Graded: ${submission.grade}` };
-    }
-    return { status: 'submitted', text: 'Submitted' };
-  };
+  
 
   const isAssignmentOverdue = (deadline) => {
     return new Date(deadline) < new Date();
@@ -139,7 +99,6 @@ const StudentsDashboard = ({ type = "overview" }) => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {assignments.map((assignment) => {
-                  const submissionStatus = getSubmissionStatus(assignment._id);
                   const isOverdue = isAssignmentOverdue(assignment.deadline);
                   const daysRemaining = getDaysRemaining(assignment.deadline);
                   const teacherName = assignment.teacherId?.name || 'Teacher';
@@ -153,20 +112,7 @@ const StudentsDashboard = ({ type = "overview" }) => {
                             <h3 className="text-lg font-bold text-gray-900 line-clamp-2">{assignment.title}</h3>
                             <p className="text-sm text-gray-600 mt-1">{assignment.subject}</p>
                           </div>
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                            submissionStatus.status === 'graded' 
-                              ? 'bg-green-100 text-green-800'
-                              : submissionStatus.status === 'submitted'
-                              ? 'bg-blue-100 text-blue-800'
-                              : isOverdue
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {isOverdue && submissionStatus.status === 'not_submitted' 
-                              ? 'Overdue' 
-                              : submissionStatus.text
-                            }
-                          </span>
+                          
                         </div>
                         
                         <p className="text-gray-700 text-sm line-clamp-3">{assignment.description}</p>
@@ -204,14 +150,7 @@ const StudentsDashboard = ({ type = "overview" }) => {
 
                         {/* Action Buttons */}
                         <div className="flex space-x-3">
-                          {submissionStatus.status === 'not_submitted' && !isOverdue && (
-                            <button
-                              onClick={() => handleSubmitAssignment(assignment._id)}
-                              className="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium"
-                            >
-                              Submit
-                            </button>
-                          )}
+                          
                           <button 
                             onClick={() => {/* Add view details functionality */}}
                             className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
@@ -290,43 +229,24 @@ const StudentsDashboard = ({ type = "overview" }) => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {assignments.slice(0, 3).map((assignment) => {
-                    const submissionStatus = getSubmissionStatus(assignment._id);
-                    const isOverdue = isAssignmentOverdue(assignment.deadline);
                     const teacherName = assignment.teacherId?.name || 'Teacher';
                     
                     return (
                       <div key={assignment._id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start mb-3">
                           <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{assignment.title}</h3>
-                          <span className={`text-xs px-2 py-1 rounded-full ${
-                            submissionStatus.status === 'graded' 
-                              ? 'bg-green-100 text-green-800'
-                              : submissionStatus.status === 'submitted'
-                              ? 'bg-blue-100 text-blue-800'
-                              : isOverdue
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-gray-100 text-gray-800'
-                          }`}>
-                            {isOverdue && submissionStatus.status === 'not_submitted' 
-                              ? 'Overdue' 
-                              : submissionStatus.text
-                            }
-                          </span>
+                          
                         </div>
-                        <p className="text-sm text-gray-600 mb-2">{assignment.subject}</p>
+                        <p className="text-sm text-gray-600 mb-2">Subject: {assignment.subject}</p>
+                        <p className="text-gray-700 text-sm line-clamp-3 mb-4">Description: {assignment.description}</p>
                         <div className="flex items-center text-xs text-gray-500 mb-3">
-                          <span>By {teacherName}</span>
+                          <span>By: {teacherName}</span>
                         </div>
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-500">
                             Due: {new Date(assignment.deadline).toLocaleDateString()}
                           </span>
-                          <button
-                            onClick={() => navigate('/students/assignments')}
-                            className="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
-                          >
-                            View
-                          </button>
+                          
                         </div>
                       </div>
                     );

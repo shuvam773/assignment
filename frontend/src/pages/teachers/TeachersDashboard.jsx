@@ -46,6 +46,7 @@ const TeachersDashboard = ({ type = "overview" }) => {
       logout();
     }
   };
+  
 
   // If we're on a nested route, show specific content based on type
   if (type !== "overview") {
@@ -125,10 +126,10 @@ const TeachersDashboard = ({ type = "overview" }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
+              <h1 className="max-w-full text-3xl font-bold text-gray-900">Teacher Dashboard</h1>
               <p className="text-gray-600">Welcome, {user?.name}</p>
             </div>
-            <div className="space-x-4">
+            <div className="space-x-4 gap-3 flex">
               <button
                 onClick={() => setShowCreateForm(true)}
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
@@ -161,12 +162,6 @@ const TeachersDashboard = ({ type = "overview" }) => {
           <div className="bg-white shadow rounded-lg">
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
               <h2 className="text-xl font-semibold text-gray-900">Recent Assignments</h2>
-              <button
-                onClick={() => navigate('/teachers/assignments')}
-                className="text-indigo-600 hover:text-indigo-800 text-sm font-medium"
-              >
-                View All
-              </button>
             </div>
             <div className="p-6">
               {loading ? (
@@ -191,7 +186,9 @@ const TeachersDashboard = ({ type = "overview" }) => {
                       <div className="flex justify-between items-start">
                         <div>
                           <h3 className="text-lg font-semibold text-gray-900">{assignment.title}</h3>
-                          <p className="text-sm text-gray-600 mt-1">{assignment.subject}</p>
+                          <p className="text-sm text-gray-600 mt-1">Subject: {assignment.subject}</p>
+                          <p className="text-gray-700 mt-2">Description: {assignment.description}</p>
+                          <p className="text-sm text-gray-500">By: {assignment.teacherId?.name}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-sm text-gray-500">
