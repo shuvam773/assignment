@@ -12,7 +12,11 @@ const assignmentRoutes = require('./routes/assignmentRoutes');
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: 'https://assignment-delta-tawny.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials
+}));
 app.use(cookieParser());
 
 app.get('/', (req, res) => {
